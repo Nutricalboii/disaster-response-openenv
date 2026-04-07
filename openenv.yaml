@@ -1,0 +1,24 @@
+version: "1.2"
+environment: "Disaster Response"
+tasks:
+  - id: "flood_evac_1"
+    name: "Identify Correct Action"
+    difficulty: "easy"
+    description: "Determine if evacuation is necessary based on rainfall and water levels."
+  - id: "flood_resource_2"
+    name: "Resource Allocation"
+    difficulty: "medium"
+    description: "Allocate boats and ambulances optimally in blocked areas."
+  - id: "flood_multi_step_3"
+    name: "Multi-Step Decision"
+    difficulty: "hard"
+    description: "Manage a dynamic crisis across 3-5 decision steps."
+evaluation:
+  metrics:
+    - "score"
+    - "reward"
+    - "step_count"
+  grader: "deterministic_rules"
+  traps:
+    - "fake_urgency"
+    - "silent_crisis"

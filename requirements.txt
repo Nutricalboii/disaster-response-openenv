@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pydantic
+requests
+openai
+jinja2
+python-multipart
+# For synthetic simulation (can use math/random)

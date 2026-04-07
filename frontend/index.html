@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disaster Intelligence - OpenEnv Winning Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --text: #f8fafc;
+            --accent: #38bdf8;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #22c55e;
+            --border: #334155;
+            --card-bg: #1e293b;
+            --panel-bg: rgba(30, 41, 59, 0.7);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            background: rgba(15, 23, 42, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            color: var(--accent);
+            text-transform: uppercase;
+        }
+
+        .location-label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            background: var(--border);
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover { transform: translateY(-2px); }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        .val-label { font-size: 0.85rem; color: #94a3b8; font-weight: 500; }
+        .val-text { font-family: monospace; font-size: 1.1rem; font-weight: 700; }
+
+        .impact-panel {
+            grid-column: span 3;
+            background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid var(--accent);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .impact-metric { text-align: center; }
+        .impact-val { font-size: 2.2rem; font-weight: 900; line-height: 1; display: block; }
+        .impact-label { font-size: 0.75rem; color: #94a3b8; text-transform: uppercase; }
+
+        .btn {
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:hover { background: #7dd3fc; transform: scale(1.02); }
+
+        .weather-banner {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid var(--accent);
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .emergency-btn {
+            background: var(--danger);
+            color: white;
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
+
+        /* Status Colors */
+        .color-danger { color: var(--danger); }
+        .color-warning { color: var(--warning); }
+        .color-success { color: var(--success); }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo-box">
+                <span class="title">DR-OpenEnv v2.0</span>
+                <div class="location-label" id="loc-display">
+                    📍 <span id="ui-region-name">Simulating...</span>
+                </div>
+                <span style="font-size: 0.75rem; opacity: 0.6;" id="ui-coords">0.00, 0.00</span>
+            </div>
+            
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <span id="ui-last-updated" style="font-size: 0.8rem; font-family: monospace; color: var(--success);">Last Updated: 00:00:00</span>
+                <select id="lang-select" class="btn" style="padding: 5px 10px;" onchange="changeLang()">
+                    <option value="en">EN</option>
+                    <option value="hi">हिन्दी</option>
+                </select>
+                <button class="btn emergency-btn" onclick="resetEnv()">NEW INCIDENT</button>
+            </div>
+        </header>
+
+        <div class="weather-banner">
+            <div style="display: flex; gap: 30px;">
+                <span>🌧️ <b>Rainfall:</b> <span id="ui-rain-val">--</span> mm</span>
+                <span>📡 <b>Forecast:</b> <span id="ui-forecast-val" class="color-warning">--</span></span>
+                <span>⛰️ <b>Terrain:</b> <span id="ui-terrain-val">--</span></span>
+            </div>
+            <div style="font-weight: 700;">
+                Risk Severity: <span id="ui-severity-val" class="color-danger">--</span>
+            </div>
+        </div>
+
+        <main class="dashboard-grid">
+            <!-- Infrastructure Card -->
+            <div class="card">
+                <div class="card-title">Infrastructure 🚧</div>
+                <div class="stat-line">
+                    <span class="val-label">Access State</span>
+                    <span class="val-text" id="ui-road-val">--</span>
+                </div>
+                <div class="stat-line">
+                    <span class="val-label">Traffic Load</span>
+                    <span class="val-text" id="ui-traffic-val">--</span>
+                </div>
+                <div class="stat-line">
+                    <span class="val-label">Rescue Route</span>
+                    <span class="val-text" id="ui-rescue-val">--</span>
+                </div>
+                <div class="stat-line">
+                    <span class="val-label">Base Altitude</span>
+                    <span id="ui-alt-val" class="val-text">-- m</span>
+                </div>
+            </div>
+
+            <!-- Resource Card -->
+            <div class="card">
+                <div class="card-title">Available Resources 🛰️</div>
+                <div class="stat-line">
+                    <span class="val-label">Rescue Boats</span>
+                    <span class="val-text" id="ui-boats-v">0</span>
+                </div>
+                <div class="stat-line">
+                    <span class="val-label">Medical Units</span>
+                    <span class="val-text" id="ui-med-v">0</span>
+                </div>
+                <div class="stat-line">
+                    <span class="val-label">Emergency Kits</span>
+                    <span class="val-text" id="ui-kits-v">0</span>
+                </div>
+                <div class="stat-line" style="border: none;">
+                    <span class="val-label">Response Potential</span>
+                    <span class="val-text color-success">HIGH</span>
+                </div>
+            </div>
+
+            <!-- Action Insight Card -->
+            <div class="card">
+                <div class="card-title">Agent Insight 🧠</div>
+                <div id="ui-insight" style="font-size: 0.85rem; line-height: 1.6; color: #cbd5e1; height: 100px; overflow: auto; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 4px;">
+                    Waiting for agent decision...
+                </div>
+                <div style="margin-top: 15px; font-size: 0.8rem;">
+                    <b>Latest Feedback:</b>
+                    <div id="ui-feedback" style="color: var(--accent); font-style: italic;">---</div>
+                </div>
+            </div>
+
+            <!-- Global Impact Panel (Massive Move) -->
+            <div class="card impact-panel">
+                <div class="impact-metric">
+                    <span class="impact-label">Estimated Population</span>
+                    <span class="impact-val" id="ui-pop-val">--</span>
+                </div>
+                <div class="impact-metric">
+                    <span class="impact-label">Current Casualties</span>
+                    <span class="impact-val color-danger" id="ui-cas-val">0</span>
+                </div>
+                <div class="impact-metric">
+                    <span class="impact-label">Time Sensitivity</span>
+                    <span class="impact-val" id="ui-sens-val" style="color: var(--warning);">--</span>
+                </div>
+                <div class="impact-metric">
+                    <span class="impact-label">Strategic Score</span>
+                    <span class="impact-val color-success" id="ui-score-val">--</span>
+                </div>
+            </div>
+        </main>
+
+        <footer style="margin-top: 40px; text-align: center; font-size: 0.7rem; opacity: 0.4;">
+            OpenEnv Disaster Resilience Suite v2.0-Winnerized | Validated Decision Logic Enabled
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
