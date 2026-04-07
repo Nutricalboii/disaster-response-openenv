@@ -1,8 +1,8 @@
-# Disaster Response OpenEnv v2.0 (Winner Edition)
+# Disaster Response OpenEnv v2.0
 
 A professional-grade disaster decision environment designed to evaluate AI agents on real-world crisis management logic.
 
-## 🚀 Key Winning Features
+## 🚀 Key Framework Features
 
 ### 1. Real-World Region Engine
 Simulates realistic disaster zones with localized metadata:

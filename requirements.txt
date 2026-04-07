@@ -5,4 +5,5 @@ requests
 openai
 jinja2
 python-multipart
-# For synthetic simulation (can use math/random)
+google-generativeai
+python-dotenv

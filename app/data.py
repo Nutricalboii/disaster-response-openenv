@@ -1,7 +1,7 @@
 import random
 from typing import Dict, List, Any
 
-# Winning Layer: Region Engine
+# Strategic Layer: Region Engine
 REGIONS = [
     {
         "name": "Assam Flood Zone",

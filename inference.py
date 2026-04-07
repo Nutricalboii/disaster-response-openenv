@@ -1,19 +1,25 @@
 import os
 import json
 import requests
-from typing import Dict, Any
+from dotenv import load_dotenv
+import google.generativeai as genai
 
-# Environment configuration
+# Load environment variables (API Key)
+load_dotenv()
+os.environ["GOOGLE_API_KEY"] = os.getenv("GEMINI_API_KEY")
+
+if not os.environ["GOOGLE_API_KEY"]:
+    print("Error: GEMINI_API_KEY not found in .env file.")
+    exit(1)
+
+genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+model = genai.GenerativeModel('gemini-1.5-flash-latest')
+
 ENV_URL = os.getenv("ENV_URL", "http://localhost:7860")
 TASK_NAME = "disaster_response_evacuation"
-MODEL_NAME = os.getenv("MODEL_NAME", "disaster-logic-v1")
 
 def run_inference():
-    """
-    Disaster Response OpenEnv Baseline.
-    Standardized agent interface for crisis management evaluation.
-    """
-    print(f"[START] task={TASK_NAME} env=disaster-response-openenv model={MODEL_NAME}")
+    print(f"[START] task={TASK_NAME} env=disaster-response-openenv model=gemini-1.5-flash")
     
     try:
         obs = requests.get(f"{ENV_URL}/reset").json()
@@ -27,34 +33,38 @@ def run_inference():
     rewards = []
 
     while not done and step < 5:
-        # Prompting logic (Simulated here or using an LLM)
-        # For the baseline, we simulate a simple logic or wait for an LLM integration
-        
-        # In a real scenario, we'd pass 'obs' to an LLM. 
-        # Here we define a structured decision based on the state.
-        
-        decision = "wait"
-        resource_use = {}
-        reasoning = "Analyzing data..."
-        
-        if obs["severity"] > 0.7:
-            decision = "evacuate"
-            reasoning = "High severity and rainfall detected. Immediate evacuation initiated."
-            if obs["road_blocked"]:
-                resource_use = {"boats": 1}
-                reasoning += " Roads blocked, deploying watercraft."
-        else:
-            reasoning = "Conditions stable. Monitoring situation."
+        # Construct Prompt for Gemini
+        prompt = f"""
+        You are a Disaster Response AI Agent.
+        Current Situation:
+        Region: {obs['region']} ({obs['lat']}, {obs['lon']})
+        Disaster: {obs['disaster']}
+        Severity: {obs['severity']*100}%
+        Weather: Rainfall={obs['rainfall']}mm, Forecast={obs['forecast']}
+        Terrain: {obs['terrain']}
+        Infrastructure: Road Blocked={obs['road_blocked']}, Traffic={obs['traffic']}, Access={obs['rescue_access']}
+        Resources: {obs['resources']}
+        Impact: Population={obs['population']}, Casualties={obs['casualties']}, Sensitivity={obs['time_sensitivity']}
 
-        action = {
-            "decision": decision,
-            "resource_use": resource_use,
-            "target_region": obs["region"],
-            "reasoning": reasoning,
-            "risk": "Medium" if obs["severity"] > 0.5 else "Low"
-        }
+        Task: Decide on the best action. 
+        Output EXACTLY a JSON object:
+        {{
+            "decision": "evacuate" | "wait" | "deploy_resources",
+            "method": "boats" | "helicopter" | "road" | "standard",
+            "priority": "low" | "medium" | "high",
+            "resource_use": {{"boats": 0, "ambulances": 0, "food_kits": 0}},
+            "target_region": "{obs['region']}",
+            "reasoning": "Short explanation referencing sensors",
+            "risk": "Low" | "Medium" | "High"
+        }}
+        """
 
         try:
+            response = model.generate_content(prompt)
+            # Remove markdown code blocks if present
+            content = response.text.strip().replace("```json", "").replace("```", "")
+            action = json.loads(content)
+            
             res = requests.post(f"{ENV_URL}/step", json=action).json()
             
             reward = res["reward"]

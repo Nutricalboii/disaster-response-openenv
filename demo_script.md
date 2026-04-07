@@ -1,4 +1,4 @@
-# 🏆 Winning Disaster Response Demo Script
+# Disaster Response Demo Script
 
 Use this script during your 2-minute Hackathon pitch to showcase the depth of the system.
 
@@ -13,7 +13,7 @@ Use this script during your 2-minute Hackathon pitch to showcase the depth of th
 ### 01:00 - The Demo (Live Action)
 "Let's look at the **Impact Panel**. Our system tracks **Current Casualties**. If an agent waits during a critical flood in Assam, our environment calculates a 'Consequence Spike'. Notice the **'Time Sensitivity'** indicator—it's currently CRITICAL."
 
-### 01:30 - The 'Winning' Feature
+### 01:30 - The Core Differentiation
 "We implemented a **Multi-Factor Grader**. It doesn't just score 1 or 0. It evaluates **Method Match**—did the agent use boats when roads were blocked? It checks for **Noise Immunity**—did it ignore a fake 'URGENT' tag when the rain was only 5mm? It evaluates **Reasoning**—does the agent mention altitude or upstream dam releases?"
 
 ### 01:50 - The Conclusion
@@ -21,7 +21,7 @@ Use this script during your 2-minute Hackathon pitch to showcase the depth of th
 
 ---
 
-## 🏗️ Demo Scenario Flow (The 'Winning' Run)
+## 🏗️ Demo Scenario Flow (Standard Evaluation)
 
 **Scenario 1: The Fake Alert**
 - **Action**: Reset to "Fake Urgency Alert (Noise)".

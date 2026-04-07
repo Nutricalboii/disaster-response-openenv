@@ -48,11 +48,11 @@ class DisasterEnv:
 
     def step(self, action: Action) -> Tuple[State, float, bool, Dict[str, Any]]:
         # Calculate scores
-        res = grade(action.dict(), self._state.dict())
+        res = grade(action.model_dump(), self._state.model_dump())
         score = res["score"]
         feedback = res["feedback"]
         
-        # Consequence Modeling (Winning Feature)
+        # Consequence Modeling (Logic Core)
         is_high_risk = self._state.severity > 0.7
         is_waiting = action.decision == "wait"
         
@@ -68,7 +68,7 @@ class DisasterEnv:
         
         # Update last action for UI
         self._state.last_action = {
-            **action.dict(),
+            **action.model_dump(),
             "feedback": feedback
         }
         
@@ -86,7 +86,7 @@ class DisasterEnv:
         return self._state, reward, done, info
 
     def state(self) -> Dict[str, Any]:
-        data = self._state.dict()
+        data = self._state.model_dump()
         # Add a "last updated" string for the UI feel
         data["last_updated_str"] = time.strftime("%H:%M:%S", time.localtime(data["timestamp"]))
         return data

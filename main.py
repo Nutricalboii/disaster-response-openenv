@@ -38,7 +38,7 @@ def reset(scenario_id: int = None):
     Resets the disaster environment.
     """
     state_obj = env.reset(scenario_id=scenario_id)
-    return state_obj.dict()
+    return state_obj.model_dump()
 
 @app.post("/step")
 def step(action: Action):
@@ -47,7 +47,7 @@ def step(action: Action):
     """
     obs, reward, done, info = env.step(action)
     return {
-        "observation": obs.dict(),
+        "observation": obs.model_dump(),
         "reward": round(reward, 3),
         "done": done,
         "info": info

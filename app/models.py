@@ -26,7 +26,7 @@ class State(BaseModel):
     rescue_access: str = "Good"
     resources: ResourceState = Field(default_factory=ResourceState)
     
-    # Impact Panel (Winning Feature)
+    # Impact Panel (Enhanced Metrics)
     population: int = 1000
     casualties: int = 0
     time_sensitivity: str = "CRITICAL"
