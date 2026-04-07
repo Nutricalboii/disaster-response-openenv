@@ -60,20 +60,28 @@ class DisasterEnv:
             # Casualty spike on waiting in critical situation
             new_casualties = random.randint(15, 45)
             self._state.casualties += new_casualties
+            # Severity increases if ignored
+            self._state.severity = min(1.0, self._state.severity + 0.05)
             feedback.append(f"CRITICAL DELAY: {new_casualties} reported casualties due to inactivity.")
         elif is_high_risk and action.decision == "evacuate":
             feedback.append("Timely evacuation saved lives.")
+            # Severity might stabilize
+            self._state.severity = max(0.0, self._state.severity - 0.1)
+        elif action.decision == "deploy_resources":
+            feedback.append(f"Resources deployed: {action.method}")
+            self._state.severity = max(0.0, self._state.severity - 0.05)
             
         reward = calculate_reward(score, self._state.step)
         
         # Update last action for UI
         self._state.last_action = {
             **action.model_dump(),
-            "feedback": feedback
+            "feedback": feedback,
+            "score": score
         }
         
         # Logic to "resolve" or progress
-        done = True if self._state.step >= 3 else False
+        done = True if self._state.step >= 5 or self._state.severity <= 0.1 else False
         self._state.step += 1
         self._state.timestamp = time.time()
         

@@ -87,6 +87,41 @@ async function resetEnv() {
     updateStats();
 }
 
+let autopilotInterval = null;
+
+async function runAgent() {
+    const insightBox = document.getElementById('ui-insight');
+    const originalText = insightBox.innerText;
+    insightBox.innerText = "Agent is analyzing situation...";
+    
+    try {
+        const res = await fetch('/run-agent');
+        const data = await res.json();
+        if (data.success) {
+            updateStats();
+        } else {
+            // Only alert if not in autopilot to avoid spam
+            if (!autopilotInterval) alert("Agent Error: " + (data.error || "Unknown error"));
+            insightBox.innerText = originalText;
+        }
+    } catch (e) {
+        console.error("Agent Run Failure", e);
+        insightBox.innerText = originalText;
+    }
+}
+
+function toggleAutopilot() {
+    const isChecked = document.getElementById('autopilot-toggle').checked;
+    if (isChecked) {
+        // Run agent every 8 seconds in autopilot
+        autopilotInterval = setInterval(runAgent, 8000);
+        runAgent(); // Initial run
+    } else {
+        if (autopilotInterval) clearInterval(autopilotInterval);
+        autopilotInterval = null;
+    }
+}
+
 // Initial Load
 setInterval(updateStats, 2000);
 updateStats();

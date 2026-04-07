@@ -48,8 +48,11 @@ Our grading system is designed to reward nuanced, expert-level human decision lo
 ### Step 2: Observe the Dashboard
 Notice the **Impact Panel**. Unlike standard datasets, our dashboard tracks **Population at Risk** and **Current Casualties** in real-time. Use the **Language Toggle** (English/Hindi) to see how we've localized this for on-the-ground deployment.
 
-### Step 3: Run the Inference
-Run the Gemini-powered agent: `python3 inference.py`. 
+### Step 3: Run the Agent
+There are two ways to see the agent in action:
+1. **From the Dashboard**: Click the **"RUN AGENT"** button in the **Agent Insight** card. This triggers the Gemini-powered decision engine immediately.
+2. **From the Terminal**: Run `python3 inference.py` to see a multi-step simulation loop with detailed terminal logs.
+
 Watch the dashboard update. See the agent's reasoning flow through to the **Agent Insight** panel, highlighting its situational awareness.
 
 ---

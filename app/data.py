@@ -93,6 +93,45 @@ SCENARIOS = [
         "rescue_access": "GOOD",
         "resources": {"boats": 0, "ambulances": 1, "food_kits": 20},
         "description": "Clear skies but Himachal upstream dam release detected! Silent high-risk landslide/flood."
+    },
+    {
+        "id": 6,
+        "name": "Odisha Cyclonic Tidal Surge",
+        "region_idx": 3,
+        "severity": 0.95,
+        "rainfall": 210,
+        "forecast": "SEVERE CYCLONE",
+        "road_blocked": True,
+        "traffic": "NONE",
+        "rescue_access": "LIMITED",
+        "resources": {"boats": 10, "ambulances": 5, "food_kits": 1000},
+        "description": "Massive storm surge in Odisha. Coastal roads submerged. Immediate rescue required."
+    },
+    {
+        "id": 7,
+        "name": "Mumbai Drainage Collapse",
+        "region_idx": 2,
+        "severity": 0.82,
+        "rainfall": 120,
+        "forecast": "EXTREME DOWNPOUR",
+        "road_blocked": True,
+        "traffic": "CHOKED",
+        "rescue_access": "FAIR",
+        "resources": {"boats": 5, "ambulances": 10, "food_kits": 200},
+        "description": "Urban flooding in Mumbai. Drainage failure has led to waist-deep water in several sectors."
+    },
+    {
+        "id": 8,
+        "name": "Assam Flash Flood (Upstream)",
+        "region_idx": 0,
+        "severity": 0.78,
+        "rainfall": 45,
+        "forecast": "MILD SHOWERS",
+        "road_blocked": False,
+        "traffic": "MODERATE",
+        "rescue_access": "FAIR",
+        "resources": {"boats": 3, "ambulances": 2, "food_kits": 150},
+        "description": "Rainfall is mild locally, but massive upstream discharge has created a sudden flash flood."
     }
 ]
 
