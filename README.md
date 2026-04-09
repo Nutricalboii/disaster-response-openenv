@@ -213,12 +213,18 @@ TriNetra evaluates:
 <p align="center">
   <b>Vaibhav Sharma</b><br>
   <a href="https://github.com/Nutricalboii">Nutricalboii</a>
-  <br><br>
+</p>
 
+<br>
+
+<p align="center">
   <b>Anushka Rawat</b><br>
   <a href="https://github.com/Anushka130126">Anushka130126</a>
-  <br><br>
+</p>
 
+<br>
+
+<p align="center">
   <b>Devesh Khurana</b><br>
   <a href="https://github.com/DeveshKhurana1-oss">DeveshKhurana1-oss</a>
 </p>
