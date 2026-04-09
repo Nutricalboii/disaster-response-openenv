@@ -1,54 +1,215 @@
-# Disaster Response OpenEnv v2.0
+# TriNetra: Autonomous Crisis Operations Engine
 
-A professional-grade disaster decision environment designed to evaluate AI agents on real-world crisis management logic.
-
-## 🚀 Key Framework Features
-
-### 1. Real-World Region Engine
-Simulates realistic disaster zones with localized metadata:
-- **Assam Flood Zone**: Brahamaputra river basin dynamics.
-- **Himachal Landslide Zone**: Upstream dam release and high-altitude risk.
-- **Mumbai Urban Flood**: High-population density drainage failure.
-- **Odisha Cyclone Coast**: Storm surge and coastal vulnerability.
-
-### 2. Decision Consequence Modeling
-Unlike static environments, this system tracks the real-world impact of agent behavior:
-- **Casualties Tracking**: Waiting in high-severity situations leads to simulated casualty spikes.
-- **Time Sensitivity**: Situations are marked as **CRITICAL**, **MODERATE**, or **STABLE**, influencing grading.
-
-### 3. Advanced Multi-Factor Grader
-Scores agents on more than just "right or wrong":
-- **Method Match**: rewards choosing boats when roads are blocked.
-- **Reasoning Context**: Verifies if the agent mentions rainfall, altitude, or specific regional risks.
-- **Noise Immunity**: Rewards agents that ignore "fake urgency" alerts but react to "silent crises".
-
-### 4. Professional Command Dashboard
-- **Location Awareness**: Lat/Lon coordinates and real-time region injection.
-- **Weather Telemetry**: Rainfall and forecast monitoring.
-- **Strategic Impact Panel**: Real-time tracking of population risk, casualties, and strategic score.
-- **Bilingual & Accessible**: Native support for Hindi and English.
-
-## 🛠️ Developer Setup
-
-### Prerequisites
-- Python 3.9+
-- FastAPI, Uvicorn, Pydantic
-
-### Quick Start
-```bash
-cd Disaster-Response-OpenEnv
-# Use your virtual environment
-python3 main.py
-```
-Visit `http://localhost:7860` for the dashboard.
-
-## ⚖️ Evaluation Compliance
-Standardized agent output format:
-- `[START]`
-- `[STEP]`
-- `[END]`
-
-Validates against **OpenEnv v1.2** standards for Disaster Resilience.
+[![OpenEnv](https://img.shields.io/badge/OpenEnv-Compliant-green)]()
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue)]()
+[![HF Spaces](https://img.shields.io/badge/Deploy-HuggingFace-orange)]()
+[![Deterministic](https://img.shields.io/badge/Scoring-Deterministic-critical)]()
+[![Multi-Agent](https://img.shields.io/badge/Architecture-Multi--Agent-purple)]()
 
 ---
-*Built for the Meta Hackathon - Disaster Response Track.*
+
+## Overview
+
+TriNetra is a high-fidelity OpenEnv environment designed to evaluate how AI agents make decisions in disaster response scenarios involving uncertainty, limited resources, and conflicting signals.
+
+It focuses on structured, multi-step decision-making where each action has measurable consequences under operational constraints.
+
+---
+
+## Problem Context
+
+Disaster response involves complex, high-pressure decision-making:
+
+- Signals from telemetry and reports may be inconsistent or misleading  
+- Infrastructure conditions evolve rapidly  
+- Resources are constrained and must be allocated carefully  
+- Decisions must be made under strict time and budget limits  
+
+Traditional evaluation setups do not capture these conditions effectively.
+
+---
+
+## Approach
+
+TriNetra models crisis operations as a sequence of decisions where an agent must:
+
+- interpret situational reports (SITREP)  
+- distinguish signal from noise  
+- allocate resources under budget constraints  
+- maintain consistency across evolving states  
+
+The environment emphasizes process-level evaluation rather than isolated outputs.
+
+---
+
+## Observation Space
+
+Each step provides a structured state:
+
+- `task_id` — active task  
+- `intelligence_report` — situational summary  
+- `telemetry_data` — sensor readings (weather, terrain, drainage)  
+- `available_resources` — counts of deployable assets  
+- `logistics_budget` — financial constraint (starting at 100,000)  
+
+---
+
+## Action Space
+
+The agent must return a structured response:
+
+- `threat_level` — low / medium / high  
+- `deploy_region` — selected region  
+- `budget_scratchpad` — cost calculation within constraints  
+- `resource_allocation` — deployment plan  
+- `reasoning` — justification  
+
+---
+
+## Tasks
+
+### triage_basic (Easy)
+- Identify threat correctly  
+- Choose appropriate response  
+
+### resource_allocation (Medium)
+- Match resources to scenario  
+- Stay within budget  
+
+### signal_vs_noise (Hard)
+- Filter misleading alerts  
+- Act on subtle but critical signals  
+
+---
+
+## Evaluation
+
+Scores range from **0.0 to 1.0** based on:
+
+- correctness of classification  
+- resource allocation accuracy  
+- adherence to constraints  
+- consistency across steps  
+
+### Constraints
+
+- incorrect region selection reduces score  
+- incorrect resource usage reduces score  
+- exceeding budget results in score = 0.0  
+
+---
+
+## System Architecture
+
+TriNetra uses a multi-agent structure:
+
+- **Agent Alpha (Intelligence):** processes signals and extracts relevant information  
+- **Agent Beta (Logistics):** computes cost-aware deployment decisions  
+
+### Procedural Generation
+
+Scenarios are generated dynamically using:
+
+- varying weather conditions  
+- terrain differences  
+- sensor inconsistencies  
+
+This prevents memorization and ensures robustness.
+
+---
+
+## Baseline Evaluation
+
+Model: Qwen/Qwen2.5-72B-Instruct  
+Execution: Hugging Face Inference API  
+
+| Task | Score |
+|------|------|
+| triage_basic | 1.00 |
+| resource_allocation | 1.00 |
+| signal_vs_noise | 1.00 |
+
+Results are deterministic and reproducible.
+
+---
+
+## Setup
+
+### Clone
+git clone https://github.com/username/trinetra.git
+cd trinetra
+
+
+### Install
+pip install uv
+uv sync
+
+
+### Environment Variables
+
+Create `.env`:
+HF_TOKEN=your_token
+MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
+API_BASE_URL=https://router.huggingface.co/v1
+
+
+---
+
+## Run
+python -m server.app
+
+
+Open:
+http://localhost:7860
+
+
+---
+
+## Inference
+python inference.py
+
+
+---
+
+## Docker
+docker build -t trinetra-engine .
+docker run -p 7860:7860 --env-file .env trinetra-engine
+
+
+---
+
+## Repository Structure
+app/ environment + grading logic
+frontend/ dashboard interface
+server/ backend service
+inference.py evaluation script
+openenv.yaml environment config
+Dockerfile container setup
+
+
+---
+
+## Design Focus
+
+TriNetra evaluates:
+
+- decision-making under uncertainty  
+- ability to filter conflicting signals  
+- resource prioritization under constraints  
+- consistency across sequential steps  
+
+---
+
+## Notes
+
+- scoring is deterministic  
+- evaluation is reproducible  
+- financial constraints are strictly enforced  
+
+---
+
+## Team
+
+- Vaibhav Sharma  
+- Anushka Rawat  
+- Devesh Khurana  
