@@ -210,6 +210,8 @@ TriNetra evaluates:
 
 ## Team
 
-- Vaibhav Sharma  
-- Anushka Rawat  
-- Devesh Khurana  
+## Team
+
+- Vaibhav Sharma ([Nutricalboii](https://github.com/Nutricalboii))  
+- Anushka Rawat ([Anushka130126](https://github.com/Anushka130126))  
+- Devesh Khurana ([DeveshKhurana1-oss](https://github.com/DeveshKhurana1-oss))  
