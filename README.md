@@ -9,14 +9,16 @@
 </p>
 
 <p align="center">
-  A structured environment for evaluating AI decision-making in high-stakes disaster scenarios
+  A structured environment for evaluating AI decision-making in high-stakes disaster response scenarios
 </p>
 
 ---
 
 ## Overview
 
-TriNetra is a high-fidelity, multi-agent simulation environment built on the OpenEnv framework. It serves as a structured evaluation system for AI agents operating in disaster response scenarios involving uncertainty, limited resources, and conflicting signals.
+TriNetra is a high-fidelity OpenEnv environment designed to evaluate how AI agents make decisions in disaster response scenarios involving uncertainty, limited resources, and conflicting signals.
+
+The environment models real-world crisis operations where agents must distinguish signal from noise and allocate resources under strict constraints. The focus is on evaluating decision processes across multiple steps, not isolated outputs.
 
 ---
 
@@ -25,11 +27,15 @@ TriNetra is a high-fidelity, multi-agent simulation environment built on the Ope
 Disaster response coordinators operate under severe cognitive load:
 
 - Multiple data sources (IoT telemetry, weather signals, reports) may conflict  
-- Infrastructure conditions change rapidly  
+- Infrastructure conditions evolve rapidly  
 - Resource pools are limited  
 - Decisions must be made under strict financial constraints  
 
-TriNetra models this decision process by simulating the role of an Emergency Operations Director — identifying real threats ("signal") from misleading inputs ("noise") and deploying resources within a fixed operational budget.
+TriNetra models the role of an Emergency Operations Director by:
+
+- filtering false-positive sensor data ("noise") from real failures ("signal")  
+- deploying physical assets such as boats and ambulances  
+- operating within a fixed budget of 100,000  
 
 ---
 
@@ -39,7 +45,7 @@ The environment emits a structured Pydantic JSON state:
 
 - `task_id` — current task  
 - `intelligence_report` — situational summary (SITREP)  
-- `telemetry_data` — raw sensor data (weather, terrain, drainage)  
+- `telemetry_data` — localized sensor data (weather, terrain, drainage)  
 - `available_resources` — boats, ambulances, food kits  
 - `logistics_budget` — financial constraint (starting at 100,000)  
 
@@ -47,13 +53,13 @@ The environment emits a structured Pydantic JSON state:
 
 ## Action Space
 
-The agent must respond with a structured Pydantic JSON:
+The agent must return a structured Pydantic JSON response:
 
 - `threat_level` — low / medium / high  
 - `deploy_region` — region extracted from SITREP  
 - `budget_scratchpad` — cost calculation (Boats: 5k, Ambulances: 2k, Food: 50)  
 - `resource_allocation` — deployment plan  
-- `reasoning` — justification  
+- `reasoning` — concise justification  
 
 ---
 
@@ -62,17 +68,17 @@ The agent must respond with a structured Pydantic JSON:
 TriNetra includes three procedurally generated tasks with deterministic grading:
 
 ### triage_basic (Easy)
-- Classify threat using terrain and weather  
-- Prioritize correct response  
+- Classify threat using terrain and weather data  
+- Prioritize appropriate response  
 
 ### resource_allocation (Medium)
 - Match resources to scenario  
-- Stay within budget constraints  
+- Stay within strict budget constraints  
 
 ### signal_vs_noise (Hard)
-- Filter misleading alerts  
-- Identify real crisis signals  
-- Deploy resources correctly  
+- Filter misleading high-urgency alerts  
+- Identify subtle but critical failures  
+- Deploy resources only to the true crisis  
 
 ---
 
@@ -82,8 +88,8 @@ Scores range from **0.0 to 1.0**, based on:
 
 - threat classification accuracy  
 - resource allocation correctness  
-- budget adherence  
-- signal vs noise handling  
+- adherence to budget constraints  
+- ability to distinguish signal from noise  
 
 ### Constraints
 
@@ -95,12 +101,8 @@ Scores range from **0.0 to 1.0**, based on:
 
 ## Baseline Performance
 
-Baseline evaluation uses a multi-agent swarm architecture:
-
-- **Agent Alpha (Intelligence):** filters signals  
-- **Agent Beta (Logistics):** performs cost reasoning  
-
-Model: `Qwen/Qwen2.5-72B-Instruct`
+Model: `Qwen/Qwen2.5-72B-Instruct`  
+Execution: Hugging Face Inference API  
 
 | Task | Difficulty | Score |
 |------|-----------|------|
@@ -108,23 +110,22 @@ Model: `Qwen/Qwen2.5-72B-Instruct`
 | resource_allocation | Medium | 1.00 |
 | signal_vs_noise | Hard | 1.00 |
 
-Scores are deterministic and reproducible.
+Results are deterministic and reproducible.
 
 ---
 
 ## System Architecture
 
-TriNetra uses a Multi-Agent Swarm design to reduce reasoning errors and improve decision clarity:
+TriNetra uses a Multi-Agent Swarm architecture:
 
-- Separation of intelligence and logistics  
-- Structured decision pipeline  
-- Reduced hallucination risk  
+- **Agent Alpha (Intelligence):** filters signals and extracts relevant insights  
+- **Agent Beta (Logistics):** performs cost-aware reasoning and deployment  
 
-### Procedural Generation
+### Procedural Generation Engine
 
-- Dynamic scenarios (weather, terrain, failures)  
-- Prevents memorization  
-- Ensures robustness across runs  
+- dynamically generates scenarios  
+- varies weather, terrain, and sensor conditions  
+- prevents memorization of static benchmarks  
 
 ---
 
@@ -146,7 +147,7 @@ uv sync
 
 ### Configure Environment
 
-Create `.env`:
+Create a `.env` file:
 HF_TOKEN=your_huggingface_token
 MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
 API_BASE_URL=https://router.huggingface.co/v1
@@ -158,7 +159,7 @@ API_BASE_URL=https://router.huggingface.co/v1
 python -m server.app
 
 
-Open:
+Open in browser:
 http://localhost:7860
 
 
@@ -178,11 +179,11 @@ docker run -p 7860:7860 --env-file .env trinetra-engine
 ---
 
 ## Repository Structure
-app/ environment + grader
-frontend/ UI dashboard
-server/ backend
+app/ environment logic and grader
+frontend/ dashboard interface
+server/ backend service
 inference.py evaluation script
-openenv.yaml environment spec
+openenv.yaml environment specification
 Dockerfile container setup
 
 
@@ -190,7 +191,7 @@ Dockerfile container setup
 
 ## Design Focus
 
-This environment evaluates:
+TriNetra evaluates:
 
 - decision-making under uncertainty  
 - filtering conflicting signals  
@@ -203,7 +204,7 @@ This environment evaluates:
 
 - scoring is deterministic  
 - evaluation is reproducible  
-- budget constraints are strictly enforced  
+- financial constraints are strictly enforced  
 
 ---
 
