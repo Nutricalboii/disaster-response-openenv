@@ -210,21 +210,21 @@ TriNetra evaluates:
 
 ## Team
 
-<p align="center">
+<p align="left">
   <b>Vaibhav Sharma</b><br>
   <a href="https://github.com/Nutricalboii">Nutricalboii</a>
 </p>
 
 <br>
 
-<p align="center">
+<p align="leftr">
   <b>Anushka Rawat</b><br>
   <a href="https://github.com/Anushka130126">Anushka130126</a>
 </p>
 
 <br>
 
-<p align="center">
+<p align="left">
   <b>Devesh Khurana</b><br>
   <a href="https://github.com/DeveshKhurana1-oss">DeveshKhurana1-oss</a>
 </p>
