@@ -1,10 +1,16 @@
-# TriNetra: Autonomous Crisis Operations Engine
+<h1 align="center">TriNetra: Autonomous Crisis Operations Engine</h1>
 
-[![OpenEnv](https://img.shields.io/badge/OpenEnv-Compliant-green)]()
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue)]()
-[![HF Spaces](https://img.shields.io/badge/Deploy-HuggingFace-orange)]()
-[![Deterministic](https://img.shields.io/badge/Scoring-Deterministic-critical)]()
-[![Multi-Agent](https://img.shields.io/badge/Architecture-Multi--Agent-purple)]()
+<p align="center">
+  <img src="https://img.shields.io/badge/OpenEnv-Compliant-green" />
+  <img src="https://img.shields.io/badge/Docker-Ready-blue" />
+  <img src="https://img.shields.io/badge/Deploy-HuggingFace-orange" />
+  <img src="https://img.shields.io/badge/Scoring-Deterministic-critical" />
+  <img src="https://img.shields.io/badge/Architecture-Multi--Agent-purple" />
+</p>
+
+<p align="center">
+  A structured environment for evaluating AI decision-making in high-stakes disaster scenarios
+</p>
 
 ---
 
