@@ -16,57 +16,42 @@
 
 ## Overview
 
-TriNetra is a high-fidelity OpenEnv environment designed to evaluate how AI agents make decisions in disaster response scenarios involving uncertainty, limited resources, and conflicting signals.
-
-It focuses on structured, multi-step decision-making where each action has measurable consequences under operational constraints.
+TriNetra is a high-fidelity, multi-agent simulation environment built on the OpenEnv framework. It serves as a structured evaluation system for AI agents operating in disaster response scenarios involving uncertainty, limited resources, and conflicting signals.
 
 ---
 
-## Problem Context
+## Environment Motivation
 
-Disaster response involves complex, high-pressure decision-making:
+Disaster response coordinators operate under severe cognitive load:
 
-- Signals from telemetry and reports may be inconsistent or misleading  
-- Infrastructure conditions evolve rapidly  
-- Resources are constrained and must be allocated carefully  
-- Decisions must be made under strict time and budget limits  
+- Multiple data sources (IoT telemetry, weather signals, reports) may conflict  
+- Infrastructure conditions change rapidly  
+- Resource pools are limited  
+- Decisions must be made under strict financial constraints  
 
-Traditional evaluation setups do not capture these conditions effectively.
-
----
-
-## Approach
-
-TriNetra models crisis operations as a sequence of decisions where an agent must:
-
-- interpret situational reports (SITREP)  
-- distinguish signal from noise  
-- allocate resources under budget constraints  
-- maintain consistency across evolving states  
-
-The environment emphasizes process-level evaluation rather than isolated outputs.
+TriNetra models this decision process by simulating the role of an Emergency Operations Director — identifying real threats ("signal") from misleading inputs ("noise") and deploying resources within a fixed operational budget.
 
 ---
 
 ## Observation Space
 
-Each step provides a structured state:
+The environment emits a structured Pydantic JSON state:
 
-- `task_id` — active task  
-- `intelligence_report` — situational summary  
-- `telemetry_data` — sensor readings (weather, terrain, drainage)  
-- `available_resources` — counts of deployable assets  
+- `task_id` — current task  
+- `intelligence_report` — situational summary (SITREP)  
+- `telemetry_data` — raw sensor data (weather, terrain, drainage)  
+- `available_resources` — boats, ambulances, food kits  
 - `logistics_budget` — financial constraint (starting at 100,000)  
 
 ---
 
 ## Action Space
 
-The agent must return a structured response:
+The agent must respond with a structured Pydantic JSON:
 
 - `threat_level` — low / medium / high  
-- `deploy_region` — selected region  
-- `budget_scratchpad` — cost calculation within constraints  
+- `deploy_region` — region extracted from SITREP  
+- `budget_scratchpad` — cost calculation (Boats: 5k, Ambulances: 2k, Food: 50)  
 - `resource_allocation` — deployment plan  
 - `reasoning` — justification  
 
@@ -74,94 +59,102 @@ The agent must return a structured response:
 
 ## Tasks
 
+TriNetra includes three procedurally generated tasks with deterministic grading:
+
 ### triage_basic (Easy)
-- Identify threat correctly  
-- Choose appropriate response  
+- Classify threat using terrain and weather  
+- Prioritize correct response  
 
 ### resource_allocation (Medium)
 - Match resources to scenario  
-- Stay within budget  
+- Stay within budget constraints  
 
 ### signal_vs_noise (Hard)
 - Filter misleading alerts  
-- Act on subtle but critical signals  
+- Identify real crisis signals  
+- Deploy resources correctly  
 
 ---
 
 ## Evaluation
 
-Scores range from **0.0 to 1.0** based on:
+Scores range from **0.0 to 1.0**, based on:
 
-- correctness of classification  
-- resource allocation accuracy  
-- adherence to constraints  
-- consistency across steps  
+- threat classification accuracy  
+- resource allocation correctness  
+- budget adherence  
+- signal vs noise handling  
 
 ### Constraints
 
-- incorrect region selection reduces score  
-- incorrect resource usage reduces score  
-- exceeding budget results in score = 0.0  
+- incorrect region → penalty  
+- incorrect resource → penalty  
+- exceeding budget → score = 0.0  
+
+---
+
+## Baseline Performance
+
+Baseline evaluation uses a multi-agent swarm architecture:
+
+- **Agent Alpha (Intelligence):** filters signals  
+- **Agent Beta (Logistics):** performs cost reasoning  
+
+Model: `Qwen/Qwen2.5-72B-Instruct`
+
+| Task | Difficulty | Score |
+|------|-----------|------|
+| triage_basic | Easy | 1.00 |
+| resource_allocation | Medium | 1.00 |
+| signal_vs_noise | Hard | 1.00 |
+
+Scores are deterministic and reproducible.
 
 ---
 
 ## System Architecture
 
-TriNetra uses a multi-agent structure:
+TriNetra uses a Multi-Agent Swarm design to reduce reasoning errors and improve decision clarity:
 
-- **Agent Alpha (Intelligence):** processes signals and extracts relevant information  
-- **Agent Beta (Logistics):** computes cost-aware deployment decisions  
+- Separation of intelligence and logistics  
+- Structured decision pipeline  
+- Reduced hallucination risk  
 
 ### Procedural Generation
 
-Scenarios are generated dynamically using:
-
-- varying weather conditions  
-- terrain differences  
-- sensor inconsistencies  
-
-This prevents memorization and ensures robustness.
-
----
-
-## Baseline Evaluation
-
-Model: Qwen/Qwen2.5-72B-Instruct  
-Execution: Hugging Face Inference API  
-
-| Task | Score |
-|------|------|
-| triage_basic | 1.00 |
-| resource_allocation | 1.00 |
-| signal_vs_noise | 1.00 |
-
-Results are deterministic and reproducible.
+- Dynamic scenarios (weather, terrain, failures)  
+- Prevents memorization  
+- Ensures robustness across runs  
 
 ---
 
 ## Setup
 
-### Clone
+### Clone Repository
 git clone https://github.com/username/trinetra.git
 cd trinetra
 
 
-### Install
+---
+
+### Install Dependencies
 pip install uv
 uv sync
 
 
-### Environment Variables
+---
+
+### Configure Environment
 
 Create `.env`:
-HF_TOKEN=your_token
+HF_TOKEN=your_huggingface_token
 MODEL_NAME=Qwen/Qwen2.5-72B-Instruct
 API_BASE_URL=https://router.huggingface.co/v1
 
 
 ---
 
-## Run
+## Run Environment
 python -m server.app
 
 
@@ -171,13 +164,13 @@ http://localhost:7860
 
 ---
 
-## Inference
+## Run Inference
 python inference.py
 
 
 ---
 
-## Docker
+## Docker Deployment
 docker build -t trinetra-engine .
 docker run -p 7860:7860 --env-file .env trinetra-engine
 
@@ -185,11 +178,11 @@ docker run -p 7860:7860 --env-file .env trinetra-engine
 ---
 
 ## Repository Structure
-app/ environment + grading logic
-frontend/ dashboard interface
-server/ backend service
+app/ environment + grader
+frontend/ UI dashboard
+server/ backend
 inference.py evaluation script
-openenv.yaml environment config
+openenv.yaml environment spec
 Dockerfile container setup
 
 
@@ -197,10 +190,10 @@ Dockerfile container setup
 
 ## Design Focus
 
-TriNetra evaluates:
+This environment evaluates:
 
 - decision-making under uncertainty  
-- ability to filter conflicting signals  
+- filtering conflicting signals  
 - resource prioritization under constraints  
 - consistency across sequential steps  
 
@@ -210,14 +203,21 @@ TriNetra evaluates:
 
 - scoring is deterministic  
 - evaluation is reproducible  
-- financial constraints are strictly enforced  
+- budget constraints are strictly enforced  
 
 ---
 
 ## Team
 
-## Team
+<p align="center">
+  <b>Vaibhav Sharma</b><br>
+  <a href="https://github.com/Nutricalboii">Nutricalboii</a>
+  <br><br>
 
-- Vaibhav Sharma ([Nutricalboii](https://github.com/Nutricalboii))  
-- Anushka Rawat ([Anushka130126](https://github.com/Anushka130126))  
-- Devesh Khurana ([DeveshKhurana1-oss](https://github.com/DeveshKhurana1-oss))  
+  <b>Anushka Rawat</b><br>
+  <a href="https://github.com/Anushka130126">Anushka130126</a>
+  <br><br>
+
+  <b>Devesh Khurana</b><br>
+  <a href="https://github.com/DeveshKhurana1-oss">DeveshKhurana1-oss</a>
+</p>
